@@ -1,0 +1,31 @@
+name: Daily Weather Push
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    
+    - name: Run script
+      env:
+        QWEATHER_KEY: ${{ secrets.QWEATHER_KEY }}
+        QWEATHER_HOST: ${{ secrets.QWEATHER_HOST }}
+        PUSH_METHOD: ${{ secrets.PUSH_METHOD }}
+        PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+        BOTTALK_SENDKEY: ${{ secrets.BOTTALK_SENDKEY }}
+        DAILY_PUSH_TIME: ${{ secrets.DAILY_PUSH_TIME }}
+        GROUP_TOPIC: ${{ secrets.GROUP_TOPIC }}
+      run: python photo_weather.py
