@@ -58,7 +58,10 @@ def get_daily_weather(city_id, day_offset=1):
     params = {"location": city_id}
     fallback_daily = f"{FALLBACK_URL}/v7/weather/3d"
     res = qweather_request(DAILY_URL, params, fallback_daily)
-    if not res or res.get("code") != "200":
+    if not res:
+        print("API请求失败")
+        return None
+    if res.get("code") != "200":
         if "error" in res:
             print(f"API错误: {res['error']['title']} - {res['error']['detail']}")
         else:
@@ -497,8 +500,12 @@ def generate_city_report(city):
 
 def generate_daily_report():
     """生成多城市明日摄影预报（平铺展示，兼容微信）"""
-    tomorrow_date = (datetime.now() + timedelta(days=1)).strftime('%Y年%m月%d日')
-    week_day = ["日", "一", "二", "三", "四", "五", "六"][(datetime.now() + timedelta(days=1)).weekday()]
+    utc_now = datetime.utcnow()
+    beijing_now = utc_now + timedelta(hours=8)
+    today = beijing_now.date()
+    tomorrow = today + timedelta(days=1)
+    tomorrow_date = tomorrow.strftime('%Y年%m月%d日')
+    week_day = ["日", "一", "二", "三", "四", "五", "六"][tomorrow.weekday()]
 
     cities_html = ""
     all_sr_quality = []
