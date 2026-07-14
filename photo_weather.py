@@ -606,6 +606,7 @@ if __name__ == "__main__":
     print("风光摄影预报助手已启动，等待定时推送...")
     generate_daily_report()
     
-    while True:
-        schedule.run_pending()
-        time.sleep(60)
+    if os.getenv("CI") != "true":
+        while True:
+            schedule.run_pending()
+            time.sleep(60)
